@@ -30,6 +30,10 @@ export interface Tree extends Disposable {
      */
     root: TreeNode | undefined;
     /**
+     * list of filtered by search nodes.
+     */
+    filteredNodes?: ReadonlyArray<Readonly<TreeNode>>;
+    /**
      * Emit when the tree is changed.
      */
     readonly onChanged: Event<void>;

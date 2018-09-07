@@ -20,7 +20,7 @@ import { Tree, TreeNode, CompositeTreeNode } from './tree';
 import { TreeSelectionService, SelectableTreeNode, TreeSelection } from './tree-selection';
 import { TreeExpansionService, ExpandableTreeNode } from './tree-expansion';
 import { TreeNavigationService } from './tree-navigation';
-import { TreeIterator, BottomUpTreeIterator, TopDownTreeIterator } from './tree-iterator';
+import { TreeIterator, BottomUpTreeIterator, TopDownTreeIterator, Iterators } from './tree-iterator';
 
 /**
  * The tree model.
@@ -279,11 +279,21 @@ export class TreeModelImpl implements TreeModel, SelectionProvider<ReadonlyArray
     }
 
     protected createBackwardIterator(node: TreeNode | undefined): TreeIterator | undefined {
-        return node ? new BottomUpTreeIterator(node!, { pruneCollapsed: true }) : undefined;
+        if (!this.filteredNodes || this.filteredNodes.length === 0 ) {
+            return node ? new BottomUpTreeIterator(node!, { pruneCollapsed: true }) : undefined;
+        } else if (node === undefined || this.filteredNodes && this.filteredNodes.indexOf(node) === -1) {
+            return undefined;
+        }
+        return Iterators.cycle(this.filteredNodes.slice().reverse(), node);
     }
 
     protected createIterator(node: TreeNode | undefined): TreeIterator | undefined {
-        return node ? new TopDownTreeIterator(node!, { pruneCollapsed: true }) : undefined;
+        if (!this.filteredNodes || this.filteredNodes.length === 0 ) {
+            return node ? new TopDownTreeIterator(node!, { pruneCollapsed: true }) : undefined;
+        } else if (node === undefined || this.filteredNodes && this.filteredNodes.indexOf(node) === -1) {
+            return undefined;
+        }
+        return Iterators.cycle(this.filteredNodes, node);
     }
 
     openNode(raw?: TreeNode | undefined): void {
@@ -364,5 +374,7 @@ export class TreeModelImpl implements TreeModel, SelectionProvider<ReadonlyArray
     selectRange(node: Readonly<SelectableTreeNode>): void {
         this.addSelection({ node, type: TreeSelection.SelectionType.RANGE });
     }
+
+    filteredNodes: ReadonlyArray<Readonly<TreeNode>>;
 
 }
