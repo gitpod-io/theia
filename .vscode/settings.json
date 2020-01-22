@@ -50,7 +50,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.insertFinalNewline": true,
   // Configuration for rustlang
-  "rust.actionOnSave": "check",
   // Required for actionOnSave to run without delay
   "rust.wait_to_build": 0,
   // FIXME: Expand nproc command here, using 16 which seems to be default on gitpod
